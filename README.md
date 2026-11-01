@@ -1,31 +1,28 @@
-#include <Stepper.h>
-#include "BluetoothSerial.h"
+# Catapulta controlada por Bluetooth (ESP32)
 
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
+Projeto da disciplina **Introdução a Projetos de Engenharia (IME)**: uma catapulta acionada por motor de
+passo e controlada pelo celular via Bluetooth.
 
-BluetoothSerial SerialBT;
+## Como funciona
 
-const int passosPorVolta = 2048;
-Stepper meuMotor(passosPorVolta, 13, 14, 12, 27);
+- O **ESP32** cria um dispositivo Bluetooth chamado `Catapulta_ESP32`.
+- Pelo celular, um app de terminal Bluetooth envia comandos de um caractere:
+  - `C` → o motor dá uma volta completa num sentido (2048 passos);
+  - `L` → o motor dá uma volta completa no sentido oposto.
+- O motor de passo é ligado aos pinos 13, 14, 12 e 27 e gira a 12 RPM.
 
-void setup() {
-  Serial.begin(115200);
-  SerialBT.begin("Catapulta_ESP32"); 
-  meuMotor.setSpeed(12);
-}
+## Hardware
 
-void loop() {
-  if (SerialBT.available()) {
-    char comando = SerialBT.read();
+- ESP32 (com Bluetooth Classic habilitado)
+- Motor de passo de 2048 passos por volta (por exemplo, 28BYJ-48) com driver
+- Fonte de alimentação para o motor
 
-    if (comando == 'C' || comando == 'c') {
-      meuMotor.step(2048); 
-    } 
-    else if (comando == 'L' || comando == 'l') {
-      meuMotor.step(-2048); 
-    }
-  }
-  delay(20);
-}
+## Como usar
+
+1. Abra `catapulta_esp32/catapulta_esp32.ino` na Arduino IDE com o pacote de placas ESP32 instalado.
+2. Grave no ESP32.
+3. Pareie o celular com `Catapulta_ESP32` e envie `C` ou `L` por um app de terminal Bluetooth.
+
+## Tecnologias
+
+C++ (Arduino) · ESP32 · BluetoothSerial · Stepper
